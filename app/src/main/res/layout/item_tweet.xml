@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/containerDetail"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="6dp">
@@ -22,6 +23,24 @@
         tools:text="gabe12345" />
 
     <TextView
+        android:id="@+id/tvTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tvBody"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/tvUsername"
+        tools:text="00000" />
+
+    <TextView
+        android:id="@+id/tvUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tvBody"
+        android:layout_marginStart="5dp"
+
+        android:layout_toEndOf="@+id/tvScreenName" />
+
+    <TextView
         android:id="@+id/tvBody"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,6 +48,51 @@
         android:layout_marginStart="5dp"
         android:layout_marginTop="2dp"
         android:layout_toEndOf="@id/ivProfileImage"
+        android:autoLink="all"
+        android:linksClickable="true"
         tools:text="This my first tweet.." />
+
+    <TextView
+        android:id="@+id/tvcomment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvBody"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@id/ivProfileImage"
+        android:drawableLeft="@drawable/comment_outline"
+        tools:text="12" />
+
+    <TextView
+        android:id="@+id/tvretweet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvBody"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@id/tvcomment"
+        android:drawableLeft="@drawable/repeat_variant"
+        tools:text="11" />
+
+    <TextView
+        android:id="@+id/tvlike"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvBody"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@id/tvretweet"
+        android:drawableLeft="@drawable/cards_heart_outline"
+        tools:text="16" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvBody"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@id/tvlike"
+        android:drawableLeft="@drawable/export_variant" />
+
 
 </RelativeLayout>
