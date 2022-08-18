@@ -17,6 +17,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
 import org.parceler.Parcels;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +76,8 @@ public class TweetsAdapter  extends  RecyclerView.Adapter<TweetsAdapter.ViewHold
         TextView tvTime;
         TextView userName;
         RelativeLayout containerDetail;
+        TextView tvretweet;
+        TextView tvlike;
 
     public ViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -84,6 +87,8 @@ public class TweetsAdapter  extends  RecyclerView.Adapter<TweetsAdapter.ViewHold
         tvBody = itemView.findViewById(R.id.tvBody);
         tvTime = itemView.findViewById(R.id.tvTime);
         userName = itemView.findViewById(R.id.tvUsername);
+        tvlike = itemView.findViewById(R.id.tvlike);
+        tvretweet = itemView.findViewById(R.id.tvretweet);
     }
 
     public void bind(Tweet tweet) {
@@ -91,6 +96,8 @@ public class TweetsAdapter  extends  RecyclerView.Adapter<TweetsAdapter.ViewHold
         tvScreenName.setText(tweet.user.name);
         tvTime.setText(tweet.getFormattedTimeStamp(tweet.createdAt));
         userName.setText(String.format("%s%S","@",tweet.user.screenName));
+        tvlike.setText(tweet.favorite);
+        tvretweet.setText(tweet.retweet);
         Glide.with(context).load(tweet.user.profileImageUrl).transform(new RoundedCorners(90)).into(ivProfileImage);
         containerDetail.setOnClickListener(new View.OnClickListener() {
             @Override
