@@ -49,6 +49,7 @@ public class TweetsAdapter  extends  RecyclerView.Adapter<TweetsAdapter.ViewHold
 
     }
 
+
     @Override
     public int getItemCount() {  return tweets.size();}
 //Clear all elements of the recycler
@@ -78,6 +79,8 @@ public class TweetsAdapter  extends  RecyclerView.Adapter<TweetsAdapter.ViewHold
         RelativeLayout containerDetail;
         TextView tvretweet;
         TextView tvlike;
+        TextView liked;
+        ImageView imageBody;
 
     public ViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -88,7 +91,9 @@ public class TweetsAdapter  extends  RecyclerView.Adapter<TweetsAdapter.ViewHold
         tvTime = itemView.findViewById(R.id.tvTime);
         userName = itemView.findViewById(R.id.tvUsername);
         tvlike = itemView.findViewById(R.id.tvlike);
+        liked = itemView.findViewById(R.id.liked);
         tvretweet = itemView.findViewById(R.id.tvretweet);
+        imageBody = itemView.findViewById(R.id.imageBody);
     }
 
     public void bind(Tweet tweet) {
@@ -96,9 +101,44 @@ public class TweetsAdapter  extends  RecyclerView.Adapter<TweetsAdapter.ViewHold
         tvScreenName.setText(tweet.user.name);
         tvTime.setText(tweet.getFormattedTimeStamp(tweet.createdAt));
         userName.setText(String.format("%s%S","@",tweet.user.screenName));
-        tvlike.setText(tweet.favorite);
-        tvretweet.setText(tweet.retweet);
+        tvlike.setText(tweet.getFavorite());
+        tvretweet.setText(tweet.getRetweet());
+         if (tweet.favorited){
+             liked.setVisibility(View.VISIBLE);
+             tvlike.setVisibility(View.INVISIBLE);
+         }else{
+             liked.setVisibility(View.INVISIBLE);
+             tvlike.setVisibility(View.VISIBLE);
+         }
+
+         // Onclick
+        tvlike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tweet.favorite ++;
+                liked.setVisibility(View.VISIBLE);
+                tvlike.setVisibility(View.INVISIBLE);
+                liked.setText(tweet.getFavorite());
+
+            }
+        });
+
+         liked.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+                 tweet.favorite --;
+                 liked.setVisibility(View.INVISIBLE);
+                 tvlike.setVisibility(View.VISIBLE);
+                 tvlike.setText(tweet.getFavorite());
+
+             }
+         });
+
+        if(!tweet.entities.mediaUrl.isEmpty()){
+            imageBody.setVisibility(View.VISIBLE);
+            Glide.with(context).load(tweet.entities.mediaUrl).transform(new RoundedCorners(30)).into(imageBody);}
         Glide.with(context).load(tweet.user.profileImageUrl).transform(new RoundedCorners(90)).into(ivProfileImage);
+
         containerDetail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -1,7 +1,13 @@
 package com.codepath.apps.restclienttemplate;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,23 +24,104 @@ public class DetailActivity extends AppCompatActivity {
     TextView tvUserName1;
     TextView tvBody1;
     TextView tvdate;
+    TextView amountLike;
+    TextView amountRetweet;
+    TextView tvlike;
+    TextView tvretweet;
+    TextView tvliked;
+    TextView tvretweeted;
+    ImageView imageBody2;
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Intent i = new Intent(DetailActivity.this,TimelineActivity.class);
+        startActivity(i);
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+
+        Toolbar toolbar = findViewById(R.id.toolBar);
+        setSupportActionBar(toolbar);
+
+        //Display toolbar's icons
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.arrow_back);
+//        getSupportActionBar().setLogo(R.drawable.ic_twitter);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle(" Tweet");
+
+
         ivProfile = findViewById(R.id.ivProfile);
         screenName1 = findViewById(R.id.screenName1);
         tvUserName1 =findViewById(R.id.tvUserName1);
         tvBody1 = findViewById(R.id.tvBody1);
         tvdate = findViewById(R.id.tvdate);
+        amountLike = findViewById(R.id.amountLike);
+        amountRetweet = findViewById(R.id.amountRetweet);
+        tvlike = findViewById(R.id.tvlike1);
+        tvretweet = findViewById(R.id.tvretweet);
+        imageBody2= findViewById(R.id.imageBody2);
+        tvliked = findViewById(R.id.tvliked);
+        tvretweeted = findViewById(R.id.tvretweet);
+
 
         Tweet tweet = Parcels.unwrap(getIntent().getParcelableExtra("Tweet"));
         screenName1.setText(tweet.user.name);
         tvUserName1.setText(tweet.user.screenName);
         tvBody1.setText(tweet.body);
-        tvdate.setText(tweet.getFormattedTime(tweet.createdAt));
+        amountLike.setText(tweet.favorite + " Likes");
+        amountRetweet.setText(tweet.retweet + " Retweets");
+        tvlike.setText(tweet.getFavorite());
+        tvretweet.setText(tweet.getRetweet());
+
+
+        if (tweet.favorited){
+            tvliked.setVisibility(View.VISIBLE);
+            tvlike.setVisibility(View.INVISIBLE);
+        }else{
+            tvliked.setVisibility(View.INVISIBLE);
+            tvlike.setVisibility(View.VISIBLE);
+        }
+
+        // onClick
+        tvlike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tweet.favorite ++;
+                tvliked.setVisibility(View.VISIBLE);
+                tvlike.setVisibility(View.INVISIBLE);
+                tvliked.setText(tweet.getFavorite());
+
+            }
+        });
+
+        tvliked.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tweet.favorite --;
+                tvliked.setVisibility(View.INVISIBLE);
+                tvlike.setVisibility(View.VISIBLE);
+                tvlike.setText(tweet.getFavorite());
+
+            }
+        });
+
+
+
+
+
+        if(!tweet.entities.mediaUrl.isEmpty()) {
+            imageBody2.setVisibility(View.VISIBLE);
+            Glide.with(this).load(tweet.entities.mediaUrl).transform(new RoundedCorners(10)).into(imageBody2);
+        }
+            tvdate.setText(tweet.getFormattedTime(tweet.createdAt));
         Glide.with(this).load(tweet.user.profileImageUrl).transform(new RoundedCorners(90)).into(ivProfile);
 
 

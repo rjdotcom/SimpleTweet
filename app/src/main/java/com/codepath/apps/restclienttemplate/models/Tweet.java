@@ -1,5 +1,6 @@
 package com.codepath.apps.restclienttemplate.models;
 
+import com.codepath.apps.restclienttemplate.Entities;
 import com.codepath.apps.restclienttemplate.TimeFormatter;
 
 import org.json.JSONArray;
@@ -12,11 +13,15 @@ import java.util.List;
 @Parcel
 public class Tweet {
     public String body;
+    public Entities entities;
     public long id;
     public String createdAt;
     public User user;
-    public String retweet;
-    public String favorite;
+    public int retweet;
+    public int favorite;
+    public boolean favorited;
+    public boolean retweeted;
+
     public Tweet() {}
 
     public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
@@ -25,10 +30,14 @@ public class Tweet {
         tweet.createdAt  = jsonObject.getString("created_at");
         tweet.id = jsonObject.getLong("id");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
-        tweet.retweet =  jsonObject.getString("retweet_count");
-        tweet.favorite = jsonObject.getString("favorite_count");
+        tweet.retweet =  jsonObject.getInt("retweet_count");
+        tweet.favorite = jsonObject.getInt("favorite_count");
+        tweet.retweeted =  jsonObject.getBoolean("retweeted");
+        tweet.favorited = jsonObject.getBoolean("favorited");
+        tweet.entities = Entities.fromJson(jsonObject.getJSONObject("entities"));
         return tweet;
     }
+
 
     public static List<Tweet> fromJsonArray(JSONArray jsonArray) throws JSONException {
         List<Tweet> tweets = new ArrayList<>();
@@ -46,4 +55,11 @@ public class Tweet {
         return TimeFormatter.getTimeStamp(createdAt);
     }
 
+    public String getRetweet() {
+        return String.valueOf(retweet);
+    }
+
+    public String getFavorite() {
+        return String.valueOf(favorite);
+    }
 }

@@ -20,16 +20,16 @@
         android:layout_marginStart="5dp"
         android:layout_toEndOf="@+id/ivProfileImage"
         android:textStyle="bold"
-        tools:text="gabe12345" />
+        tools:text="Kyle XY" />
 
     <TextView
         android:id="@+id/tvTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/tvBody"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="5dp"
         android:layout_toEndOf="@+id/tvUsername"
-        tools:text="00000" />
+        tools:text="3m" />
 
     <TextView
         android:id="@+id/tvUsername"
@@ -37,6 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/tvBody"
         android:layout_marginStart="5dp"
+        tools:text="zzzz"
 
         android:layout_toEndOf="@+id/tvScreenName" />
 
@@ -50,27 +51,30 @@
         android:layout_toEndOf="@id/ivProfileImage"
         android:autoLink="all"
         android:linksClickable="true"
-        tools:text="This my first tweet.." />
+        tools:text="This is my first tweet!!!!" />
 
-    <TextView
-        android:id="@+id/tvcomment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvBody"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="5dp"
+    <ImageView
+        android:id="@+id/imageBody"
+        android:layout_width="400dp"
+        android:layout_below="@+id/tvBody"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="5dp"
         android:layout_toEndOf="@id/ivProfileImage"
-        android:drawableLeft="@drawable/comment_outline"
-        tools:text="12" />
+        android:visibility="gone"
+        android:layout_height="300dp"
+        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
 
     <TextView
         android:id="@+id/tvretweet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvBody"
-        android:layout_marginStart="35dp"
-        android:layout_marginTop="5dp"
-        android:layout_toEndOf="@id/tvcomment"
+        android:layout_below="@id/imageBody"
+        android:layout_marginStart="90dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:layout_toEndOf="@id/reply"
         android:drawableLeft="@drawable/repeat_variant"
         tools:text="11" />
 
@@ -78,21 +82,47 @@
         android:id="@+id/tvlike"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvBody"
-        android:layout_marginStart="35dp"
-        android:layout_marginTop="5dp"
+        android:layout_below="@id/imageBody"
+        android:layout_marginStart="90dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
         android:layout_toEndOf="@id/tvretweet"
-        android:drawableLeft="@drawable/cards_heart_outline"
+        android:drawableLeft="@drawable/fav"
         tools:text="16" />
 
     <TextView
+        android:id="@+id/liked"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvBody"
-        android:layout_marginStart="35dp"
-        android:layout_marginTop="5dp"
-        android:layout_toEndOf="@id/tvlike"
-        android:drawableLeft="@drawable/export_variant" />
+        android:layout_below="@id/imageBody"
+        android:layout_marginStart="90dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:layout_toEndOf="@id/tvretweet"
+        android:drawableLeft="@drawable/gold_fav"
+
+        tools:text="16" />
+
+    <TextView
+        android:id="@+id/reply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imageBody"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="3dp"
+        android:layout_toEndOf="@id/ivProfileImage"
+        android:drawableLeft="@drawable/reply" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/tvlike"
+        android:layout_marginTop="4dp"
+        android:background="?android:attr/listDivider" />
+
+
 
 
 </RelativeLayout>
