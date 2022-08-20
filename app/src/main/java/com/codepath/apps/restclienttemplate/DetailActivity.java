@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,12 +32,14 @@ public class DetailActivity extends AppCompatActivity {
     TextView tvliked;
     TextView tvretweeted;
     ImageView imageBody2;
+    EditText editText;
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         Intent i = new Intent(DetailActivity.this,TimelineActivity.class);
-        startActivity(i);
-        return super.onOptionsItemSelected(item);
+        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivityIfNeeded(i, 0);
+        return true;
     }
 
     @Override
@@ -70,7 +73,7 @@ public class DetailActivity extends AppCompatActivity {
         imageBody2= findViewById(R.id.imageBody2);
         tvliked = findViewById(R.id.tvliked);
         tvretweeted = findViewById(R.id.tvretweetD);
-
+        editText = findViewById(R.id.editText);
 
         Tweet tweet = Parcels.unwrap(getIntent().getParcelableExtra("Tweet"));
         screenName1.setText(tweet.user.name);
@@ -78,8 +81,16 @@ public class DetailActivity extends AppCompatActivity {
         tvBody1.setText(tweet.body);
         amountLike.setText(tweet.favorite + " Likes");
         amountRetweet.setText(tweet.retweet + " Retweets");
-        tvlike.setText(tweet.getFavorite());
-        tvretweet.setText(tweet.getRetweet());
+        editText.setHint("Reply"+ tweet.user.name);
+
+        if (tweet.retweeted){
+            tvretweeted.setVisibility(View.VISIBLE);
+            tvretweet.setVisibility(View.INVISIBLE);}
+
+        if (tweet.favorited){
+            tvliked.setVisibility(View.VISIBLE);
+            tvlike.setVisibility(View.INVISIBLE);
+        }
 
         //retweet hover
         if (tweet.retweeted){
