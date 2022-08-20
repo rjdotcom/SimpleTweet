@@ -52,7 +52,7 @@ public class DetailActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.arrow_back);
-//        getSupportActionBar().setLogo(R.drawable.ic_twitter);
+        getSupportActionBar().setLogo(R.drawable.ic_twitter);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(" Tweet");
@@ -69,7 +69,7 @@ public class DetailActivity extends AppCompatActivity {
         tvretweet = findViewById(R.id.tvretweet);
         imageBody2= findViewById(R.id.imageBody2);
         tvliked = findViewById(R.id.tvliked);
-        tvretweeted = findViewById(R.id.tvretweet);
+        tvretweeted = findViewById(R.id.tvretweetD);
 
 
         Tweet tweet = Parcels.unwrap(getIntent().getParcelableExtra("Tweet"));
@@ -80,6 +80,40 @@ public class DetailActivity extends AppCompatActivity {
         amountRetweet.setText(tweet.retweet + " Retweets");
         tvlike.setText(tweet.getFavorite());
         tvretweet.setText(tweet.getRetweet());
+
+        //retweet hover
+        if (tweet.retweeted){
+            tvretweeted.setVisibility(View.VISIBLE);
+            tvretweet.setVisibility(View.INVISIBLE);
+        }else{
+            tvretweeted.setVisibility(View.INVISIBLE);
+            tvretweet.setVisibility(View.VISIBLE);
+        }
+
+        //     Onclick for  retweet  icon
+        tvretweet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tweet.retweet ++;
+                tvretweeted.setVisibility(View.VISIBLE);
+                tvretweet.setVisibility(View.INVISIBLE);
+                tvretweeted.setText(tweet.getRetweet());
+
+            }
+        });
+
+        tvretweeted.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tweet.retweet --;
+                tvretweeted.setVisibility(View.INVISIBLE);
+                tvretweet.setVisibility(View.VISIBLE);
+                tvretweet.setText(tweet.getRetweet());
+
+            }
+        });
+
+
 
 
         if (tweet.favorited){

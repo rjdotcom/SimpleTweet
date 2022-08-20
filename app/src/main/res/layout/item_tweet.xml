@@ -79,6 +79,19 @@
         tools:text="11" />
 
     <TextView
+        android:id="@+id/tvretweetac"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imageBody"
+        android:layout_marginStart="90dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:layout_toEndOf="@id/reply"
+        android:drawableLeft="@drawable/retweeted_active"
+        tools:text="11" />
+
+
+    <TextView
         android:id="@+id/tvlike"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

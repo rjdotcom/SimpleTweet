@@ -78,6 +78,7 @@ public class TweetsAdapter  extends  RecyclerView.Adapter<TweetsAdapter.ViewHold
         TextView userName;
         RelativeLayout containerDetail;
         TextView tvretweet;
+        TextView tvretweeted;
         TextView tvlike;
         TextView liked;
         ImageView imageBody;
@@ -93,6 +94,7 @@ public class TweetsAdapter  extends  RecyclerView.Adapter<TweetsAdapter.ViewHold
         tvlike = itemView.findViewById(R.id.tvlike);
         liked = itemView.findViewById(R.id.liked);
         tvretweet = itemView.findViewById(R.id.tvretweet);
+        tvretweeted = itemView.findViewById(R.id.tvretweetac);
         imageBody = itemView.findViewById(R.id.imageBody);
     }
 
@@ -103,6 +105,42 @@ public class TweetsAdapter  extends  RecyclerView.Adapter<TweetsAdapter.ViewHold
         userName.setText(String.format("%s%S","@",tweet.user.screenName));
         tvlike.setText(tweet.getFavorite());
         tvretweet.setText(tweet.getRetweet());
+
+        //retweet hover
+        if (tweet.retweeted){
+            tvretweeted.setVisibility(View.VISIBLE);
+            tvretweet.setVisibility(View.INVISIBLE);
+        }else{
+            tvretweeted.setVisibility(View.INVISIBLE);
+            tvretweet.setVisibility(View.VISIBLE);
+        }
+
+//     Onclick for  retweet  icon
+        tvretweet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tweet.retweet ++;
+                tvretweeted.setVisibility(View.VISIBLE);
+                tvretweet.setVisibility(View.INVISIBLE);
+                tvretweeted.setText(tweet.getRetweet());
+
+            }
+        });
+
+        tvretweeted.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tweet.retweet --;
+                tvretweeted.setVisibility(View.INVISIBLE);
+                tvretweet.setVisibility(View.VISIBLE);
+                tvretweet.setText(tweet.getRetweet());
+
+            }
+        });
+
+
+
+        //like hover
          if (tweet.favorited){
              liked.setVisibility(View.VISIBLE);
              tvlike.setVisibility(View.INVISIBLE);
@@ -111,7 +149,7 @@ public class TweetsAdapter  extends  RecyclerView.Adapter<TweetsAdapter.ViewHold
              tvlike.setVisibility(View.VISIBLE);
          }
 
-         // Onclick
+         // Onclick for likes icon
         tvlike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
