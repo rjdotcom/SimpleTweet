@@ -177,8 +177,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:ems="10"
-        android:inputType="text"
-       android:hint="Reply " />
+        android:hint="Reply "
+        android:textSize="14dp"
+        android:inputType="text" />
 
 
 </RelativeLayout>
