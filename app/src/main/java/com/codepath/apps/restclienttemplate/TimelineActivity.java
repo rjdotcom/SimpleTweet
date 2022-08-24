@@ -1,9 +1,9 @@
 package com.codepath.apps.restclienttemplate;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -11,14 +11,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.TweetDao;
@@ -116,9 +110,8 @@ public class TimelineActivity extends AppCompatActivity {
         makeTweet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    // Navigate to the compose activity
-                    Intent i = new Intent(TimelineActivity.this, ComposeActivity.class);
-                    startActivityForResult(i,REQUUEST_CODE);
+                showEditDialog();
+
 
                 }
         });
@@ -156,6 +149,13 @@ public class TimelineActivity extends AppCompatActivity {
 
          populateHometimeline();
 
+
+    }
+
+    private void showEditDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        CreateTweet editNameDialogFragment = CreateTweet.newInstance("New tweet");
+        editNameDialogFragment.show(fm, "fragment_edit_name");
 
     }
 
