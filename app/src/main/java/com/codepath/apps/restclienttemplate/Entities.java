@@ -1,13 +1,23 @@
 package com.codepath.apps.restclienttemplate;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcel;
 
 @Parcel
+@Entity
 public class Entities {
+    @ColumnInfo
     public String mediaUrl;
+
+    @PrimaryKey
+    @ColumnInfo
+    public  long id_media;
 
     public Entities() {}
 
@@ -20,7 +30,7 @@ public class Entities {
 
             final JSONArray mediaArr =  jsonObject.getJSONArray("media");
             entities.mediaUrl=  mediaArr.getJSONObject(0).getString("media_url_https");
-
+            entities.id_media = mediaArr.getJSONObject(0).getLong("id");
         }
         return entities;
     }
