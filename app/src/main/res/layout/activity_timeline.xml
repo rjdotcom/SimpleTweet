@@ -44,11 +44,12 @@
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/makeTweet"
         android:layout_width="wrap_content"
-        android:backgroundTint="#1DA1F2"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
         android:layout_margin="16dp"
+        android:backgroundTint="#1DA1F2"
         android:src="@drawable/plus"
         app:layout_anchor="@id/rvTweets"
-        app:layout_anchorGravity="bottom|right|end" />
+        app:layout_anchorGravity="bottom|right|end"
+        tools:ignore="SpeakableTextPresentCheck" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
