@@ -210,6 +210,9 @@ public class TimelineActivity extends AppCompatActivity {
 //                            insert users
                             List<User> userFromNetwork = User.fromJsonTweetsArray(tweetsFromNetwork);
                             tweetDao.insertModel(userFromNetwork.toArray(new User [0]));
+//                            insert entities
+                            List<Entities> entitiesFromNetwork = Entities.fromJsonTweetsArray(tweetsFromNetwork);
+                            tweetDao.insertModel(entitiesFromNetwork.toArray(new Entities [0]));
 //                            insert tweets
                             tweetDao.insertModel(tweetsFromNetwork.toArray(new Tweet [0]));
                         }
