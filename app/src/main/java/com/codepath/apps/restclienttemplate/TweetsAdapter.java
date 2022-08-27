@@ -2,6 +2,8 @@ package com.codepath.apps.restclienttemplate;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -82,6 +86,7 @@ public class TweetsAdapter  extends  RecyclerView.Adapter<TweetsAdapter.ViewHold
         TextView tvlike;
         TextView liked;
         ImageView imageBody;
+        TextView reply;
 
     public ViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -96,6 +101,7 @@ public class TweetsAdapter  extends  RecyclerView.Adapter<TweetsAdapter.ViewHold
         tvretweet = itemView.findViewById(R.id.tvretweet);
         tvretweeted = itemView.findViewById(R.id.tvretweetac);
         imageBody = itemView.findViewById(R.id.imageBody);
+        reply = itemView.findViewById(R.id.reply);
     }
 
     public void bind(Tweet tweet) {
@@ -106,6 +112,7 @@ public class TweetsAdapter  extends  RecyclerView.Adapter<TweetsAdapter.ViewHold
         tvlike.setText(tweet.getFavorite());
         tvretweet.setText(tweet.getRetweet());
 
+
         //retweet hover
         if (tweet.retweeted){
             tvretweeted.setVisibility(View.VISIBLE);
@@ -114,6 +121,14 @@ public class TweetsAdapter  extends  RecyclerView.Adapter<TweetsAdapter.ViewHold
             tvretweeted.setVisibility(View.INVISIBLE);
             tvretweet.setVisibility(View.VISIBLE);
         }
+// Onclick for reply
+        reply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showEditDialog(Parcels.wrap(tweet));
+            }
+        });
+
 
 //     Onclick for  retweet  icon
         tvretweet.setOnClickListener(new View.OnClickListener() {
@@ -187,6 +202,21 @@ public class TweetsAdapter  extends  RecyclerView.Adapter<TweetsAdapter.ViewHold
         });
 
     }
+
 }
+    private void showEditDialog(Parcelable tweet) {
+        FragmentManager fm = ((FragmentActivity) context).getSupportFragmentManager();
+        ReplyFragment replyFragment = ReplyFragment.newInstance("New reply");
+        replyFragment.show(fm, "reply fragment");
+
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("tweets", tweet);
+        bundle.putParcelable("profile", Parcels.wrap(TimelineActivity.user));
+        replyFragment.setArguments(bundle);
+
+
+    }
+
+
 
 }

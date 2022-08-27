@@ -23,6 +23,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -30,12 +31,12 @@ import java.util.List;
 
 import okhttp3.Headers;
 
-public class TimelineActivity extends AppCompatActivity {
+public class TimelineActivity extends AppCompatActivity implements CreateTweet.CreateTweetListener{
 
     public static final int REQUUEST_CODE = 20;
 
     TweetDao tweetDao;
-
+    public static User  user;
     TwitterClient client;
     RecyclerView rvTweets;
     List<Tweet> tweets;
@@ -72,6 +73,9 @@ public class TimelineActivity extends AppCompatActivity {
          client = TwitterApp.getRestClient(this);
          makeTweet = findViewById(R.id.makeTweet);
 
+        //         find the recyclerview
+        rvTweets = findViewById(R.id.rvTweets);
+
          tweetDao = ((TwitterApp) getApplicationContext()).getMyDatabase().tweetDao();
 
 
@@ -84,12 +88,11 @@ public class TimelineActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setLogo(R.drawable.ic_twitter);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
-
         getSupportActionBar().setTitle(" ");
 
+        // Configure the refreshing colors
 
             swipeContainer = findViewById(R.id.swipeContainer);
-        // Configure the refreshing colors
             swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
@@ -104,8 +107,7 @@ public class TimelineActivity extends AppCompatActivity {
          });
 
 
-//         find the recyclerview
-        rvTweets = findViewById(R.id.rvTweets);
+
 
         makeTweet.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,11 +119,12 @@ public class TimelineActivity extends AppCompatActivity {
         });
 
 
-//        init the list of tweets and adapter
+        //        init the list of tweets and adapter
         tweets = new ArrayList<>();
         adapter = new TweetsAdapter(this,tweets);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-//        recyclerview setup: layout manager and adapter
+
+        //        recyclerview setup: layout manager and adapter
         rvTweets.setLayoutManager(layoutManager);
         rvTweets.setAdapter(adapter);
         scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
@@ -131,10 +134,11 @@ public class TimelineActivity extends AppCompatActivity {
                         loadMoreData();
             }
         };
+
         // Adds the scroll listener to RecyclerView
         rvTweets.addOnScrollListener(scrollListener);
-//        QUERY EXISTING TWEETS
 
+        //        QUERY EXISTING TWEETS
         AsyncTask.execute(new Runnable() {
             @Override
             public void run(){
@@ -155,7 +159,8 @@ public class TimelineActivity extends AppCompatActivity {
     private void showEditDialog() {
         FragmentManager fm = getSupportFragmentManager();
         CreateTweet editNameDialogFragment = CreateTweet.newInstance("New tweet");
-        editNameDialogFragment.show(fm, "fragment_edit_name");
+        editNameDialogFragment.show(fm, "create");
+
 
     }
 
@@ -191,6 +196,24 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void populateHometimeline() {
+        client.getCredentials(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                JSONObject jsonObject = json.jsonObject;
+                try {
+                    user = User.fromJson(jsonObject);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+
+            }
+        });
+
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
@@ -207,13 +230,15 @@ public class TimelineActivity extends AppCompatActivity {
                     AsyncTask.execute(new Runnable() {
                         @Override
                         public void run(){
-//                            insert users
+                             //  insert users
                             List<User> userFromNetwork = User.fromJsonTweetsArray(tweetsFromNetwork);
                             tweetDao.insertModel(userFromNetwork.toArray(new User [0]));
-//                            insert entities
+
+                            //  insert entities
                             List<Entities> entitiesFromNetwork = Entities.fromJsonTweetsArray(tweetsFromNetwork);
                             tweetDao.insertModel(entitiesFromNetwork.toArray(new Entities [0]));
-//                            insert tweets
+
+                            //  insert tweets
                             tweetDao.insertModel(tweetsFromNetwork.toArray(new Tweet [0]));
                         }
 
@@ -225,7 +250,6 @@ public class TimelineActivity extends AppCompatActivity {
 
                 }
 
-
             }
 
             @Override
@@ -233,5 +257,17 @@ public class TimelineActivity extends AppCompatActivity {
                 Log.e(TAG,"onFailure!",throwable );
             }
         });
+    }
+
+    @Override
+    public void onFinishCreatetweet(Tweet tweet) {
+        //modify data source
+        tweets.add(0, tweet);
+
+        //Update the adapter
+        adapter.notifyItemInserted(0);
+
+        //  Update the RV with the tweet
+        rvTweets.smoothScrollToPosition(0);
     }
 }

@@ -1,51 +1,49 @@
 package com.codepath.apps.restclienttemplate;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Point;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Display;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONException;
 import org.parceler.Parcels;
 
 import okhttp3.Headers;
-// ...
 
-public class CreateTweet extends DialogFragment {
-    public static String TAG = "ComposeActivity";
+public class ReplyFragment extends DialogFragment {
+
+    public static String TAG = "ReplyFragment";
 
     public static final int MAX_TWEET_LENGTH = 140;
-    public  static  final  String KEY = "DRAFT";
 
     Context context;
+    Button btnReply;
     TwitterClient client;
-    ImageButton close;
     private EditText mEditText;
-    Button btnTweet;
+    TextView tvname;
+    TextView tvusername;
+    ImageView profile;
+    TextInputLayout counter;
 
-    public CreateTweet() {
+    public ReplyFragment() {
         // Empty constructor is required for DialogFragment
         // Make sure not to add arguments to the constructor
         // Use `newInstance` instead as shown below
@@ -54,13 +52,15 @@ public class CreateTweet extends DialogFragment {
 
 // interface listener for the fragment
 
-    public interface CreateTweetListener{
-        void onFinishCreatetweet(Tweet tweet);
+    public  interface ReplyListener{
+        void onFinishReply(Tweet tweet);
     }
 
 
-    public static CreateTweet newInstance(String title) {
-        CreateTweet frag = new CreateTweet();
+
+
+    public static ReplyFragment newInstance(String title) {
+        ReplyFragment frag = new ReplyFragment();
         Bundle args = new Bundle();
         args.putString("title", title);
         frag.setArguments(args);
@@ -70,7 +70,7 @@ public class CreateTweet extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.createtweet, container);
+        return inflater.inflate(R.layout.replyfragment, container);
 
     }
 
@@ -80,9 +80,20 @@ public class CreateTweet extends DialogFragment {
 
         // Get field from view
         client = TwitterApp.getRestClient(context);
-        btnTweet = view.findViewById(R.id.btnTweet);
-        mEditText = (EditText) view.findViewById(R.id.etCompose);
-        close = view.findViewById(R.id.closeWindow);
+        btnReply = view.findViewById(R.id.btnReply);
+        mEditText = (EditText) view.findViewById(R.id.etReply);
+        tvname = view.findViewById(R.id.tvname);
+        tvusername = view.findViewById(R.id.tvusername);
+        profile = view.findViewById(R.id.profile);
+        counter = view.findViewById(R.id.counterText);
+
+        Bundle bundle = getArguments();
+        User user = Parcels.unwrap(bundle.getParcelable("profile"));
+        Tweet tweet = Parcels.unwrap(bundle.getParcelable("tweets"));
+
+        tvname.setText(user.name);
+        tvusername.setText(user.screenName);
+        Glide.with(getContext()).load(user.profileImageUrl).transform(new RoundedCorners(90)).into(profile);
 
         // Fetch arguments from bundle and set title
         String title = getArguments().getString("title", "Make new tweet");
@@ -94,22 +105,10 @@ public class CreateTweet extends DialogFragment {
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         getDialog().getWindow().setLayout(700,950);
 
-//        Saving Draft
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String draft = preferences.getString(KEY,"");
+        counter.setHint("Reply to @"  + tweet.user.screenName);
 
-        if (!draft.isEmpty()){
-            mEditText.setText(draft);
-        }
 
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) { openAlert();
-                dismiss();
-
-            }
-        });
-    btnTweet.setOnClickListener(new View.OnClickListener() {
+        btnReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String tweetContent = mEditText.getText().toString();
@@ -124,6 +123,7 @@ public class CreateTweet extends DialogFragment {
                 }
 
 
+
                 // Make an API call to Twitter to Publish the tweet
                 client.publishTweet(tweetContent, new JsonHttpResponseHandler() {
                     @Override
@@ -131,13 +131,10 @@ public class CreateTweet extends DialogFragment {
                         Log.i(TAG, "onSuccess to publish");
                         try {
                             Tweet tweet = Tweet.fromJson(json.jsonObject);
-                            CreateTweetListener listener = (CreateTweetListener) getTargetFragment();
-                            listener.onFinishCreatetweet(tweet);
+                            ReplyFragment.ReplyListener listener = (ReplyFragment.ReplyListener) getTargetFragment();
+                            listener.onFinishReply(tweet);
 
                             Log.i(TAG, "published tweet" + tweet);
-
-                            Edit edit   = (Edit)  getTargetFragment();
-                            edit.onFinishEdit(tweet);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -158,34 +155,5 @@ public class CreateTweet extends DialogFragment {
         });
     }
 
-    // Alert draft
-    public void openAlert(){
-        AlertDialog.Builder alertDialogBuilder= new AlertDialog.Builder(getContext());
-        alertDialogBuilder.setMessage("Save to Draft");
-        alertDialogBuilder.setPositiveButton("Keep", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface arg0, int arg1) { save();}
-        });
-       alertDialogBuilder.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
-           @Override
-           public void onClick(DialogInterface dialog, int which) { dismiss();}
-       });
-       AlertDialog dialog = alertDialogBuilder.create();
-       dialog.show();
-    }
 
-//     save to draft
-    private  void save(){
-        String create =  mEditText.getText().toString();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(KEY,create);
-        editor.commit();
-        dismiss();
-    }
-    public  interface Edit{
-        void onFinishEdit(Tweet tweet);
-    }
 }
-
-
